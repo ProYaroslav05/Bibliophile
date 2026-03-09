@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10 Книг, Які Обов'язково Треба Прочитати</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts: Merriweather (Serif) and Inter (Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+
+    <!-- Custom Config for Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'literary-cream': '#F9F7F2',
+                        'literary-charcoal': '#2D2D2D',
+                        'literary-gold': '#C5A059',
+                        'literary-gold-hover': '#A88645',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Smooth Fade Transitions */
+        .view-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .view-section.active {
+            display: block;
+            opacity: 1;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card Hover Effects */
+        .book-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Button Hover */
+        .btn-primary {
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #A88645;
+            transform: scale(1.02);
+        }
+
+        .btn-secondary {
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #2D2D2D;
+            color: white;
+            transform: scale(1.02);
+        }
+
+        /* Language Toggle Switch - Desktop */
+        .lang-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #d1d5db;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .lang-toggle.active {
+            background: #C5A059;
+        }
+        .lang-toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #2D2D2D;
+        }
+        .lang-toggle.active .lang-toggle-slider {
+            transform: translateX(30px);
+        }
+        .lang-labels {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 8px;
+            box-sizing: border-box;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            pointer-events: none;
+        }
+
+        /* Language Toggle Switch - Mobile */
+        .lang-toggle-mobile {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #d1d5db;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .lang-toggle-mobile.active {
+            background: #C5A059;
+        }
+        .lang-toggle-mobile .lang-toggle-slider {
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            font-size: 9px;
+        }
+        .lang-toggle-mobile.active .lang-toggle-slider {
+            transform: translateX(24px);
+        }
+        .lang-toggle-mobile .lang-labels {
+            font-size: 8px;
+            padding: 0 6px;
+        }
+    </style>
+</head>
+<body class="bg-literary-cream text-literary-charcoal font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="w-full py-6 px-4 md:px-12 flex justify-between items-center border-b border-stone-200 bg-literary-cream/90 backdrop-blur-sm sticky top-0 z-50">
+        <div class="font-serif text-2xl font-bold tracking-tighter cursor-pointer" onclick="navigateTo('home')">
+            <span data-i18n="site_name_part1">БІБЛІО</span><span class="text-literary-gold" data-i18n="site_name_part2">ФІЛ</span>
+        </div>
+        <div class="hidden md:flex space-x-8 font-serif text-sm tracking-wide items-center">
+            <button data-i18n="nav_home" onclick="navigateTo('home')" class="hover:text-literary-gold transition-colors cursor-pointer">Головна</button>
+            <button data-i18n="nav_collection" onclick="navigateTo('list')" class="hover:text-literary-gold transition-colors cursor-pointer">Колекція</button>
+            <button data-i18n="nav_author" onclick="navigateTo('author')" class="hover:text-literary-gold transition-colors cursor-pointer">Автор</button>
+            
+            <!-- Language Toggle - Desktop -->
+            <div class="flex items-center gap-3 ml-4 pl-4 border-l border-stone-300">
+                <span class="text-xs font-semibold text-stone-500">EN</span>
+                <div class="lang-toggle" id="langToggle" onclick="toggleLanguage()">
+                    <div class="lang-labels">
+                        <span>UA</span>
+                        <span>EN</span>
+                    </div>
+                    <div class="lang-toggle-slider" id="langSlider">UA</div>
+                </div>
+                <span class="text-xs font-semibold text-literary-gold">UA</span>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="md:hidden flex items-center gap-4">
+            <button class="text-2xl cursor-pointer" onclick="navigateTo('list')">☰</button>
+            <!-- Language Toggle - Mobile -->
+            <div class="lang-toggle-mobile" id="langToggleMobile" onclick="toggleLanguage()">
+                <div class="lang-labels">
+                    <span>UA</span>
+                    <span>EN</span>
+                </div>
+                <div class="lang-toggle-slider" id="langSliderMobile">UA</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow relative">
+
+        <!-- VIEW 1: HOME PAGE -->
+        <section id="home-view" class="view-section active min-h-[85vh] flex items-center justify-center px-4 py-8">
+            <div class="text-center max-w-4xl mx-auto w-full">
+                <p data-i18n="home_subtitle" class="text-literary-gold font-serif italic text-lg mb-6 animate-pulse">Відібрано для сучасної душі</p>
+                <h1 data-i18n="home_title" class="font-serif text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight text-literary-charcoal">
+                    Десять Шедеврів <br /> Що Визначають Літературу
+                </h1>
+                <p data-i18n="home_description" class="text-stone-600 text-base md:text-lg lg:text-xl mb-10 max-w-2xl mx-auto font-light px-2">
+                    Від дистопічних візій Орвелла до магічного реалізму Маркеса. 
+                    Дослідіть колекцію вічних історій, що сформували людську думку.
+                </p>
+                <div class="flex flex-col gap-4 justify-center items-center w-full max-w-md mx-auto px-4">
+                    <button data-i18n="home_button" onclick="navigateTo('list')" class="btn-primary bg-literary-gold text-white font-serif px-10 py-4 rounded-sm text-lg shadow-lg cursor-pointer w-full">
+                        Почати Дослідження
+                    </button>
+                    <button data-i18n="home_author_button" onclick="navigateTo('author')" class="btn-secondary border-2 border-literary-charcoal text-literary-charcoal font-serif px-10 py-4 rounded-sm text-lg cursor-pointer w-full">
+                        Про Автора
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: BOOK LIST -->
+        <section id="list-view" class="view-section py-12 px-4 md:px-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 data-i18n="collection_title" class="font-serif text-4xl font-bold mb-4">Колекція</h2>
+                    <div class="w-24 h-1 bg-literary-gold mx-auto"></div>
+                </div>
+                
+                <!-- Grid -->
+                <div id="book-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <!-- Cards injected via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: BOOK DETAILS -->
+        <section id="detail-view" class="view-section py-12 px-4 md:px-12">
+            <div class="max-w-5xl mx-auto bg-white shadow-xl rounded-sm overflow-hidden flex flex-col md:flex-row">
+                <!-- Image Side -->
+                <div class="md:w-2/5 bg-stone-100 p-8 flex items-center justify-center">
+                    <img id="detail-img" src="" alt="Book Cover" class="w-full max-w-xs shadow-2xl rounded-sm transform hover:scale-105 transition-transform duration-500">
+                </div>
+                
+                <!-- Content Side -->
+                <div class="md:w-3/5 p-8 md:p-12 flex flex-col justify-center">
+                    <button onclick="navigateTo('list')" class="self-start mb-6 text-stone-500 hover:text-literary-gold flex items-center gap-2 transition-colors text-sm font-semibold uppercase tracking-wider cursor-pointer">
+                        <span>←</span> <span data-i18n="detail_back">Назад до Списку</span>
+                    </button>
+                    
+                    <h2 id="detail-title" class="font-serif text-4xl md:text-5xl font-bold mb-2 text-literary-charcoal"></h2>
+                    <p id="detail-author" class="text-literary-gold font-serif text-xl italic mb-8"></p>
+                    
+                    <div class="space-y-6 text-stone-700 leading-relaxed">
+                        <div>
+                            <h3 data-i18n="detail_plot_title" class="font-bold text-sm uppercase tracking-widest text-stone-400 mb-2">Сюжет</h3>
+                            <p id="detail-plot" class="font-light"></p>
+                        </div>
+                        <div>
+                            <h3 data-i18n="detail_why_title" class="font-bold text-sm uppercase tracking-widest text-stone-400 mb-2">Чому Читати?</h3>
+                            <p id="detail-why" class="font-light"></p>
+                        </div>
+                    </div>
+
+                    <div class="mt-10 pt-8 border-t border-stone-100 flex justify-end">
+                        <a id="detail-find-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn-primary bg-literary-charcoal text-white px-6 py-3 rounded-sm text-sm font-serif hover:bg-stone-800 inline-block">
+                            <span data-i18n="detail_find_book">Знайти книгу</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: AUTHOR PAGE -->
+        <section id="author-view" class="view-section py-12 px-4 md:px-12">
+            <div class="max-w-3xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 data-i18n="author_title" class="font-serif text-4xl font-bold mb-4">Про Автора</h2>
+                    <div class="w-24 h-1 bg-literary-gold mx-auto"></div>
+                </div>
+                
+                <div class="bg-white shadow-xl rounded-sm p-8 md:p-12">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-24 h-24 bg-literary-gold rounded-full flex items-center justify-center mb-6">
+                            <span class="text-4xl font-serif text-white font-bold">ЯР</span>
+                        </div>
+                        
+                        <h3 class="font-serif text-3xl font-bold text-literary-charcoal mb-2">Ярослав Рябченко</h3>
+                        <p class="text-literary-gold font-serif italic text-lg mb-6">Група ОПЗ-25</p>
+                        
+                        <div class="space-y-4 text-stone-700 leading-relaxed max-w-xl">
+                            <p data-i18n="author_text_1">
+                                Вітаю! Я створив цей сайт як навчальний проєкт, щоб поділитися своєю любов'ю до літератури та продемонструвати навички веб-розробки.
+                            </p>
+                            <p data-i18n="author_text_2">
+                                Кожна книга в цій колекції була ретельно відібрана не лише за її літературною цінністю, але й за впливом на світову культуру та мислення.
+                            </p>
+                            <p data-i18n="author_text_3">
+                                Сподіваюся, цей проєкт надихне вас відкрити для себе нові світи через читання.
+                            </p>
+                        </div>
+
+                        <div class="mt-10 pt-8 border-t border-stone-100 w-full">
+                            <button onclick="navigateTo('list')" class="btn-primary bg-literary-gold text-white font-serif px-8 py-3 rounded-sm cursor-pointer">
+                                <span data-i18n="author_button">Переглянути Колекцію</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-literary-charcoal text-stone-400 py-8 text-center text-sm font-light">
+        <p data-i18n="footer_text">&copy; 2024 Бібліофіл Колекція. Створено для Читачів.</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Translations
+        const translations = {
+            ua: {
+                site_name_part1: "БІБЛІО",
+                site_name_part2: "ФІЛ",
+                nav_home: "Головна",
+                nav_collection: "Колекція",
+                nav_author: "Автор",
+                home_subtitle: "Відібрано для сучасної душі",
+                home_title: "Десять Шедеврів<br/>Що Визначають Літературу",
+                home_description: "Від дистопічних візій Орвелла до магічного реалізму Маркеса. Дослідіть колекцію вічних історій, що сформували людську думку.",
+                home_button: "Почати Дослідження",
+                home_author_button: "Про Автора",
+                collection_title: "Колекція",
+                detail_back: "Назад до Списку",
+                detail_plot_title: "Сюжет",
+                detail_why_title: "Чому Читати?",
+                detail_find_book: "Знайти книгу",
+                footer_text: "© 2024 Бібліофіл Колекція. Створено для Читачів.",
+                read_more: "Детальніше",
+                by_author: "автор",
+                author_title: "Про Автора",
+                author_text_1: "Вітаю! Я створив цей сайт як навчальний проєкт, щоб поділитися своєю любов'ю до літератури та продемонструвати навички веб-розробки.",
+                author_text_2: "Кожна книга в цій колекції була ретельно відібрана не лише за її літературною цінністю, але й за впливом на світову культуру та мислення.",
+                author_text_3: "Сподіваюся, цей проєкт надихне вас відкрити для себе нові світи через читання.",
+                author_button: "Переглянути Колекцію"
+            },
+            en: {
+                site_name_part1: "BIBLIO",
+                site_name_part2: "PHILE",
+                nav_home: "Home",
+                nav_collection: "The Collection",
+                nav_author: "Author",
+                home_subtitle: "Curated for the Modern Soul",
+                home_title: "Ten Masterpieces<br/>That Define Literature",
+                home_description: "From the dystopian visions of Orwell to the magical realism of Márquez. Explore a collection of timeless stories that have shaped human thought.",
+                home_button: "Start Exploring",
+                home_author_button: "About Author",
+                collection_title: "The Collection",
+                detail_back: "Back to List",
+                detail_plot_title: "The Plot",
+                detail_why_title: "Why Read It?",
+                detail_find_book: "Find Book",
+                footer_text: "© 2024 Bibliophile Collection. Designed for Readers.",
+                read_more: "Read More",
+                by_author: "by",
+                author_title: "About the Author",
+                author_text_1: "Hello! I created this website as a learning project to share my love for literature and demonstrate web development skills.",
+                author_text_2: "Each book in this collection was carefully selected not only for its literary value, but also for its impact on world culture and thinking.",
+                author_text_3: "I hope this project will inspire you to discover new worlds through reading.",
+                author_button: "View Collection"
+            }
+        };
+
+        // Book Data with both languages and search URLs
+        const books = {
+            ua: [
+                {
+                    id: 1,
+                    title: "1984",
+                    author: "Джордж Орвелл",
+                    searchQuery: "1984 George Orwell book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/1b6427989-6eb4-472e-91c0-f72381247343.png",
+                    plot: "У тоталітарному суспільстві майбутнього Вінстон Сміт, чия щоденна робота полягає у переписуванні історії, намагається повстати, закохавшись.",
+                    why: "Холодне пророцтво про майбутнє, яке залишається жахливо актуальним у вік спостереження та 'фейкових новин'. Це визначення жанру дистопічної фантастики."
+                },
+                {
+                    id: 2,
+                    title: "Великий Гетсбі",
+                    author: "Ф. Скотт Фіцджеральд",
+                    searchQuery: "The Great Gatsby F. Scott Fitzgerald book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/148692cfc-e991-4bcf-990a-2d1a31f8e98f.png",
+                    plot: "Загадковий Джей Гетсбі влаштовує розкішні вечірки в надії повернути свою втрачену кохану, Дейзі Б'юкенен, у Нью-Йорку 1920-х років.",
+                    why: "Найкращий американський роман. Він захоплює декаданс епохи джазу, досліджуючи порожнечу американської мрії."
+                },
+                {
+                    id: 3,
+                    title: "Убити пересмішника",
+                    author: "Гарпер Лі",
+                    searchQuery: "To Kill a Mockingbird Harper Lee book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/14755ba3b-7b97-45a0-a0ec-c94a5a0e9470.png",
+                    plot: "Маленька Скаут Фінч спостерігає, як її батько, Аттікус, захищає чорношкірого чоловіка, неправдиво звинуваченого у злочині на сегрегованому Півдні.",
+                    why: "Шедевр емпатії та справедливості. Через очі дитини Лі викриває глибокий расизм та моральну складність дорослого світу."
+                },
+                {
+                    id: 4,
+                    title: "Сто років самотності",
+                    author: "Габріель Гарсія Маркес",
+                    searchQuery: "One Hundred Years of Solitude Gabriel García Márquez book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/1681d68b5-a75a-4d85-abc3-12786dc414b4.png",
+                    plot: "Багатопоколіннєва історія родини Буендіа, патріарх якої заснував місто Макондо.",
+                    why: "Вершина магічного реалізму. Він переплітає історію, міф та сімейну драму в розкішний, гіпнотичний гобелен, який здається одночасно сюрреалістичним і глибоко людським."
+                },
+                {
+                    id: 5,
+                    title: "Гордість і упередження",
+                    author: "Джейн Остін",
+                    searchQuery: "Pride and Prejudice Jane Austen book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/1de111264-3c90-4415-9a7e-e36520b03750.png",
+                    plot: "Елізабет Беннет стикається з питаннями манер, виховання, моралі та шлюбу в британському суспільстві початку 19 століття.",
+                    why: "Дотепний, романтичний і гострий. Соціальний коментар Остін обгорнутий в одну з найбільших історій кохання, коли-небудь написаних, з культовим містером Дарсі."
+                },
+                {
+                    id: 6,
+                    title: "Ловець у житі",
+                    author: "Д.Д. Селінджер",
+                    searchQuery: "The Catcher in the Rye J.D. Salinger book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/139b47132-7bb7-43ee-bdf2-5b9ec92344cf.png",
+                    plot: "Холден Колфілд, відчужений підліток, тікає зі своєї підготовчої школи і блукає Нью-Йорком кілька днів.",
+                    why: "Визначальний голос підліткової тривоги та відчуження. Він захоплює болісний перехід від дитячої невинності до 'фальші' дорослого світу."
+                },
+                {
+                    id: 7,
+                    title: "Мобі Дік",
+                    author: "Герман Мелвілл",
+                    searchQuery: "Moby Dick Herman Melville book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/13716e5a1-afd6-4765-b4e4-09a5997ee4cc.png",
+                    plot: "Капітан Ахаб одержимий полюванням на білого кита, який відкусив йому ногу, втягуючи свою команду у фатальну одержимість.",
+                    why: "Епічна пригода, яка також є глибоким філософським роздумом про одержимість, Бога та природу. Проза шекспірівська за своєю силою."
+                },
+                {
+                    id: 8,
+                    title: "Війна і мир",
+                    author: "Лев Толстой",
+                    searchQuery: "War and Peace Leo Tolstoy book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/1525efc5d-3e56-4589-b889-c585219d0f82.png",
+                    plot: "Толстой хронізує французьке вторгнення в Росію та вплив наполеонівської епохи на царське суспільство через історії п'яти російських аристократичних родин.",
+                    why: "Часто називають найбільшим романом, коли-небудь написаним. Він бездоганно поєднує інтимну особисту драму з масштабним хаосом історії та війни."
+                },
+                {
+                    id: 9,
+                    title: "Одіссея",
+                    author: "Гомер",
+                    searchQuery: "The Odyssey Homer book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/121b06f4a-9ea4-47fb-b6b1-af2330dd7154.png",
+                    plot: "Грецький герой Одіссей бореться за повернення додому на Ітаку після падіння Трої, стикаючись з монстрами, богами та спокусами.",
+                    why: "Фундамент західної літератури. Це архетипова історія подорожі, сповнена пригод, хитрощів та стійкої сили дому."
+                },
+                {
+                    id: 10,
+                    title: "Кохана",
+                    author: "Тоні Моррісон",
+                    searchQuery: "Beloved Toni Morrison book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/1468c126b-4ea9-48fc-a70b-d34475017235.png",
+                    plot: "Дія відбувається після Громадянської війни в Америці, колишня рабиня переслідувана привидом своєї померлої доньки та травмою свого минулого.",
+                    why: "Тривожний, поетичний шедевр, який протистоїть жорстокій спадщині рабства. Проза Моррісон вісцеральна, емоційна та незабутня."
+                }
+            ],
+            en: [
+                {
+                    id: 1,
+                    title: "1984",
+                    author: "George Orwell",
+                    searchQuery: "1984 George Orwell book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/1b6427989-6eb4-472e-91c0-f72381247343.png",
+                    plot: "In a totalitarian future society, Winston Smith, whose daily work is re-writing history, tries to rebel by falling in love.",
+                    why: "A chilling prophecy about the future that remains terrifyingly relevant in the age of surveillance and 'fake news'. It defines the genre of dystopian fiction."
+                },
+                {
+                    id: 2,
+                    title: "The Great Gatsby",
+                    author: "F. Scott Fitzgerald",
+                    searchQuery: "The Great Gatsby F. Scott Fitzgerald book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/148692cfc-e991-4bcf-990a-2d1a31f8e98f.png",
+                    plot: "The mysterious Jay Gatsby throws lavish parties in hopes of winning back his lost love, Daisy Buchanan, in 1920s New York.",
+                    why: "The ultimate American novel. It captures the decadence of the Jazz Age while exploring the hollowness of the American Dream."
+                },
+                {
+                    id: 3,
+                    title: "To Kill a Mockingbird",
+                    author: "Harper Lee",
+                    searchQuery: "To Kill a Mockingbird Harper Lee book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/14755ba3b-7b97-45a0-a0ec-c94a5a0e9470.png",
+                    plot: "Young Scout Finch watches her father, Atticus, defend a black man falsely accused of a crime in the segregated South.",
+                    why: "A masterclass in empathy and justice. Through the eyes of a child, Lee exposes the deep-seated racism and moral complexity of adulthood."
+                },
+                {
+                    id: 4,
+                    title: "One Hundred Years of Solitude",
+                    author: "Gabriel García Márquez",
+                    searchQuery: "One Hundred Years of Solitude Gabriel García Márquez book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/1681d68b5-a75a-4d85-abc3-12786dc414b4.png",
+                    plot: "The multi-generational story of the Buendía family, whose patriarch founded the town of Macondo.",
+                    why: "The pinnacle of Magical Realism. It weaves history, myth, and family drama into a lush, hypnotic tapestry that feels both surreal and deeply human."
+                },
+                {
+                    id: 5,
+                    title: "Pride and Prejudice",
+                    author: "Jane Austen",
+                    searchQuery: "Pride and Prejudice Jane Austen book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/1de111264-3c90-4415-9a7e-e36520b03750.png",
+                    plot: "Elizabeth Bennet deals with issues of manners, upbringing, morality, and marriage in British society of the early 19th century.",
+                    why: "Witty, romantic, and sharp. Austen's social commentary is wrapped in one of the greatest love stories ever written, featuring the iconic Mr. Darcy."
+                },
+                {
+                    id: 6,
+                    title: "The Catcher in the Rye",
+                    author: "J.D. Salinger",
+                    searchQuery: "The Catcher in the Rye J.D. Salinger book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/139b47132-7bb7-43ee-bdf2-5b9ec92344cf.png",
+                    plot: "Holden Caulfield, an alienated teenager, runs away from his prep school and wanders around New York City for a few days.",
+                    why: "The definitive voice of teenage angst and alienation. It captures the painful transition from childhood innocence to the 'phoniness' of the adult world."
+                },
+                {
+                    id: 7,
+                    title: "Moby Dick",
+                    author: "Herman Melville",
+                    searchQuery: "Moby Dick Herman Melville book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/13716e5a1-afd6-4765-b4e4-09a5997ee4cc.png",
+                    plot: "Captain Ahab is obsessed with hunting down the white whale that bit off his leg, dragging his crew into a fatal obsession.",
+                    why: "An epic adventure that is also a profound philosophical meditation on obsession, God, and nature. The prose is Shakespearean in its power."
+                },
+                {
+                    id: 8,
+                    title: "War and Peace",
+                    author: "Leo Tolstoy",
+                    searchQuery: "War and Peace Leo Tolstoy book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/1525efc5d-3e56-4589-b889-c585219d0f82.png",
+                    plot: "Tolstoy chronicles the French invasion of Russia and the impact of the Napoleonic era on Tsarist society through the stories of five Russian aristocratic families.",
+                    why: "Often called the greatest novel ever written. It seamlessly blends intimate personal drama with the sweeping chaos of history and war."
+                },
+                {
+                    id: 9,
+                    title: "The Odyssey",
+                    author: "Homer",
+                    searchQuery: "The Odyssey Homer book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/121b06f4a-9ea4-47fb-b6b1-af2330dd7154.png",
+                    plot: "The Greek hero Odysseus struggles to return home to Ithaca after the fall of Troy, facing monsters, gods, and temptations.",
+                    why: "The foundation of Western literature. It is the archetypal journey story, filled with adventure, cunning, and the enduring power of home."
+                },
+                {
+                    id: 10,
+                    title: "Beloved",
+                    author: "Toni Morrison",
+                    searchQuery: "Beloved Toni Morrison book",
+                    image: "https://image.qwenlm.ai/public_source/e59b68bf-8249-41b1-8d27-80bb10804cce/1468c126b-4ea9-48fc-a70b-d34475017235.png",
+                    plot: "Set after the American Civil War, a former slave is haunted by the ghost of her dead daughter and the trauma of her past.",
+                    why: "A haunting, poetic masterpiece that confronts the brutal legacy of slavery. Morrison's prose is visceral, emotional, and unforgettable."
+                }
+            ]
+        };
+
+        // Current Language State
+        let currentLang = 'ua';
+        // Track currently viewed book
+        let currentBookId = null;
+
+        // Language Toggle Function
+        function toggleLanguage() {
+            currentLang = currentLang === 'ua' ? 'en' : 'ua';
+            updateLanguageUI();
+            updateAllText();
+            renderBookList();
+            
+            // If we're on detail view, update the book content too
+            if (currentBookId !== null) {
+                updateBookDetailContent(currentBookId);
+            }
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = currentLang;
+            
+            // Save preference to localStorage
+            localStorage.setItem('preferredLanguage', currentLang);
+        }
+
+        // Update Language Toggle UI
+        function updateLanguageUI() {
+            const toggle = document.getElementById('langToggle');
+            const toggleMobile = document.getElementById('langToggleMobile');
+            const slider = document.getElementById('langSlider');
+            const sliderMobile = document.getElementById('langSliderMobile');
+            
+            if (currentLang === 'ua') {
+                toggle.classList.add('active');
+                toggleMobile.classList.add('active');
+                slider.textContent = 'UA';
+                sliderMobile.textContent = 'UA';
+            } else {
+                toggle.classList.remove('active');
+                toggleMobile.classList.remove('active');
+                slider.textContent = 'EN';
+                sliderMobile.textContent = 'EN';
+            }
+        }
+
+        // Update All Text Content
+        function updateAllText() {
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    if (key === 'home_title') {
+                        element.innerHTML = translations[currentLang][key];
+                    } else {
+                        element.textContent = translations[currentLang][key];
+                    }
+                }
+            });
+            
+            // Update footer
+            const footer = document.querySelector('footer p');
+            footer.textContent = translations[currentLang]['footer_text'];
+        }
+
+        // Update Book Detail Content (for language switch)
+        function updateBookDetailContent(bookId) {
+            const bookList = books[currentLang];
+            const book = bookList.find(b => b.id === bookId);
+            const t = translations[currentLang];
+            
+            if (!book) return;
+
+            document.getElementById('detail-img').src = book.image;
+            document.getElementById('detail-title').textContent = book.title;
+            document.getElementById('detail-author').textContent = `${t.by_author} ${book.author}`;
+            document.getElementById('detail-plot').textContent = book.plot;
+            document.getElementById('detail-why').textContent = book.why;
+            
+            // Set the search URL for the Find Book button
+            const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(book.searchQuery)}`;
+            document.getElementById('detail-find-btn').href = searchUrl;
+        }
+
+        // Navigation Logic
+        function navigateTo(viewId) {
+            // Hide all sections
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.remove('active');
+                setTimeout(() => {
+                    if(!el.classList.contains('active')) el.style.display = 'none';
+                }, 500);
+            });
+
+            // Show target section
+            const target = document.getElementById(viewId + '-view');
+            target.style.display = 'block';
+            setTimeout(() => {
+                target.classList.add('active');
+            }, 50);
+
+            // Reset book ID if going to list, home, or author
+            if (viewId === 'list' || viewId === 'home' || viewId === 'author') {
+                currentBookId = null;
+            }
+
+            window.scrollTo(0, 0);
+        }
+
+        // Render Book List
+        function renderBookList() {
+            const grid = document.getElementById('book-grid');
+            const bookList = books[currentLang];
+            const t = translations[currentLang];
+            
+            grid.innerHTML = bookList.map(book => `
+                <div class="book-card bg-white p-4 rounded-sm shadow-sm border border-stone-100 flex flex-col h-full cursor-pointer group" onclick="openDetail(${book.id})">
+                    <div class="aspect-[2/3] w-full overflow-hidden mb-4 bg-stone-100 relative">
+                        <img src="${book.image}" alt="${book.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="font-serif text-xl font-bold text-literary-charcoal mb-1 group-hover:text-literary-gold transition-colors">${book.title}</h3>
+                        <p class="text-stone-500 text-sm font-serif italic mb-4">${t.by_author} ${book.author}</p>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-stone-100">
+                        <span class="text-xs font-bold uppercase tracking-widest text-literary-gold group-hover:underline">${t.read_more}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Open Detail View
+        function openDetail(id) {
+            currentBookId = id;
+            updateBookDetailContent(id);
+            navigateTo('detail');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load saved language preference
+            const savedLang = localStorage.getItem('preferredLanguage');
+            if (savedLang && (savedLang === 'ua' || savedLang === 'en')) {
+                currentLang = savedLang;
+            }
+            
+            updateLanguageUI();
+            updateAllText();
+            renderBookList();
+        });
+
+    </script>
+</body>
+</html>
+
